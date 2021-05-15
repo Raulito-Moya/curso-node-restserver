@@ -33,6 +33,7 @@ const UsuarioSchema =  Schema({
     rol: {
         type: String,
         required: true,
+        default: 'USER_ROLE', //exportacion por defecto
         emun: ['ADMIN_ROLE', 'USER_ROLE']
     },
     estado: {
