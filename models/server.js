@@ -7,7 +7,8 @@ class Server {
     constructor(){  //aqui me creo la const app como una propiedad en la clase del servidor
         this.app = express();
         this.port = process.env.PORT
-        this.usuariosPath = '/api/usuarios'
+        this.usuariosPath = '/api/usuarios';
+        this.authPath = '/api/auth';
 
          //Conectar a la base de datos
          this.conectarDB();
@@ -38,8 +39,10 @@ class Server {
 
 
     routes(){
-       
+
+        this.app.use(this.authPath, require('../routes/auth'));
         this.app.use(this.usuariosPath, require('../routes/usuarios'));
+        
     }
  
     
