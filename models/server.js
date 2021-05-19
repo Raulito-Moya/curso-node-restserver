@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const fileUpload = require('express-fileupload')
+
 const { dbConnection } = require('../database/config');
 
 class Server {
@@ -7,11 +9,21 @@ class Server {
     constructor(){  //aqui me creo la const app como una propiedad en la clase del servidor
         this.app = express();
         this.port = process.env.PORT
-        this.usuariosPath = '/api/usuarios';
+
+        this.paths = {
+          usuariosPath:  '/api/usuarios',
+          authPath:      '/api/auth',
+          categorias:    '/api/categorias',
+          busqueda:      '/api/buscar',
+          productos:     '/api/productos',
+          uploads:       '/api/uploads'
+
+        }
+      /*  this.usuariosPath = ;
         this.authPath = '/api/auth';
         this.categorias = '/api/categorias';
         this.productos = '/api/productos';
-        this.busqueda = '/api/buscar';
+        this.busqueda = '/api/buscar';*/
          //Conectar a la base de datos
          this.conectarDB();
 
@@ -26,6 +38,7 @@ class Server {
           await dbConnection()
     }
 
+
     middlewares(){
     
       //CORDS
@@ -36,17 +49,24 @@ class Server {
 
       //Directorio publico
       this.app.use( express.static('public') )
+
+      //FileUploed 
+      this.app.use(fileUpload({
+        limits: { fileSize: 50 * 1024 * 1024 },
+        createParentPath: true
+      }));
           
     }
 
 
     routes(){
 
-        this.app.use(this.authPath, require('../routes/auth'));
-        this.app.use(this.usuariosPath, require('../routes/usuarios'));
-        this.app.use(this.categorias, require('../routes/categorias'));
-        this.app.use(this.productos, require('../routes/productos'));
-        this.app.use(this.busqueda, require('../routes/buscar'))
+        this.app.use(this.paths.authPath, require('../routes/auth'));
+        this.app.use(this.paths.usuariosPath, require('../routes/usuarios'));
+        this.app.use(this.paths.categorias, require('../routes/categorias'));
+        this.app.use(this.paths.productos, require('../routes/productos'));
+        this.app.use(this.paths.busqueda, require('../routes/buscar'));
+        this.app.use(this.paths.uploads, require('../routes/uploads'))
     }
  
     
