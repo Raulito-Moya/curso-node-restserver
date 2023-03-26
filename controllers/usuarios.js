@@ -64,20 +64,20 @@ const usersPut = async(req, res = response ) => {
 const usersPost = async(req, res = response ) => {
     
 
-    const {nombre, correo, password, rol} = req.body;
-    const user = new User({nombre, correo, password, rol}) //le mando el body y el modelo va a guardar en base de datos lo que este validado
+    const {username, email, password} = req.body;
+    const user = new User({username, email, password}) //le mando el body y el modelo va a guardar en base de datos lo que este validado
      
      
      //Encriptar la contrsena
      const salt = bcryptjs.genSaltSync(); //salt es el numero de vueltas
-     usuario.password = bcryptjs.hashSync( password, salt ); //encripto la constarsena
+     user.password = bcryptjs.hashSync( password, salt ); //encripto la constarsena
 
      //guardar en BD
      await user.save();
     
     res.json({
         msg: 'post API -controlador',
-        usuario
+        user
     });
 
  } 
@@ -92,7 +92,7 @@ const usersDelete = async(req, res ) => {
    //Fisicamente lo borramos
   // const usuario = await Usuario.findByIdAndDelete( id );
    
-  const usuario = await User.findOneAndUpdate( id, { estado: false} ) ; //para borrarlo una mejor practiva es cambiarle el estado al usuario
+  const user = await User.findOneAndUpdate( id, { estado: false} ) ; //para borrarlo una mejor practiva es cambiarle el estado al usuario
   
 
     res.json( user );
