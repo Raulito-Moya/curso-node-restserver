@@ -11,7 +11,7 @@ class Server {
         this.port = process.env.PORT
 
         this.paths = {
-          usuariosPath:  '/api/usuarios',
+          usersPath:  '/api/users',
           authPath:      '/api/auth',
           categorias:    '/api/categorias',
           busqueda:      '/api/buscar',
@@ -73,7 +73,7 @@ class Server {
    listen(){
 
     this.app.listen( this.port, () => {
-        console.log('Servidor corriendo en puerto', this.port);
+        console.log('Server is running in the port', this.port);
     });
 
    }

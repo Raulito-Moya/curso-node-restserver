@@ -12,19 +12,19 @@
 const {Schema, model} = require('mongoose')
 
 
-const UsuarioSchema =  Schema({
+const UserSchema =  Schema({
     nombre:{
         type: String,
-        required: [true, 'El nombre es obligatorio']  //true: es requerido, 2do argumento: mensaje
+        required: [true, 'The name is requiered']  //true: es requerido, 2do argumento: mensaje
     },
     correo:{
         type:String,
-        required: [true, 'El correro es obligatorio'],
+        required: [true, 'th email is requiered'],
         unique: true //un solo correo electronico 
     },
     password:{
         type:String,
-        required: [true, 'La contrsena es obligatorio'],
+        required: [true, 'The password is requiered'],
         unique: true //un solo correo electronico 
     },
     img: {
@@ -54,4 +54,4 @@ UsuarioSchema.methods.toJSON = function(){  //aqui modifico el metodo toJSON del
   return usuario
 }
 
-module.exports = model( 'Usuario', UsuarioSchema )
+module.exports = model( 'User', UsuarioSchema )

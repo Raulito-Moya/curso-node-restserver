@@ -1,10 +1,10 @@
 const { response , request }  = require('express')  //esto lo importo para el tipado
 const bcryptjs = require('bcryptjs');  //este paquete para encriptar la contrasena
 
-const Usuario = require('../models/usuario');
+const User = require('../models/usuario');
 
 
-const usuariosGet =  async(req = request, res = response ) => {
+const usersGet =  async(req = request, res = response ) => {
 
    
     const { limite = 5, desde = 0} = req.query;
@@ -18,8 +18,8 @@ const usuariosGet =  async(req = request, res = response ) => {
     */
 
      const [total, usuarios] = await Promise.all([
-        Usuario.countDocuments(query),
-        Usuario.find(query)
+        User.countDocuments(query),
+        User.find(query)
           .skip(Number(desde))
           .limit(Number(limite) )
      ])
@@ -40,7 +40,7 @@ const usuariosGet =  async(req = request, res = response ) => {
 }
 
 
-const usuariosPut = async(req, res = response ) => {
+const usersPut = async(req, res = response ) => {
 
     const { id } = req.params
     const { _id, password, google, correo, ...resto } = req.body;
@@ -53,19 +53,19 @@ const usuariosPut = async(req, res = response ) => {
 
       }
     
-    const usuario = await Usuario.findByIdAndUpdate( id, resto ) //encontrar en el modelo y actualizar
+    let user = await User.findByIdAndUpdate( id, resto ) //encontrar en el modelo y actualizar
 
-    res.json(usuario);
+    res.json(user);
 
  }
 
 
 
-const usuariosPost = async(req, res = response ) => {
+const usersPost = async(req, res = response ) => {
     
 
     const {nombre, correo, password, rol} = req.body;
-    const usuario = new Usuario({nombre, correo, password, rol}) //le mando el body y el modelo va a guardar en base de datos lo que este validado
+    const user = new User({nombre, correo, password, rol}) //le mando el body y el modelo va a guardar en base de datos lo que este validado
      
      
      //Encriptar la contrsena
@@ -73,7 +73,7 @@ const usuariosPost = async(req, res = response ) => {
      usuario.password = bcryptjs.hashSync( password, salt ); //encripto la constarsena
 
      //guardar en BD
-     await usuario.save();
+     await user.save();
     
     res.json({
         msg: 'post API -controlador',
@@ -83,7 +83,7 @@ const usuariosPost = async(req, res = response ) => {
  } 
 
 
-const usuariosDelete = async(req, res ) => {
+const usersDelete = async(req, res ) => {
 
    const { id } = req.params
     
@@ -92,15 +92,15 @@ const usuariosDelete = async(req, res ) => {
    //Fisicamente lo borramos
   // const usuario = await Usuario.findByIdAndDelete( id );
    
-  const usuario = await Usuario.findOneAndUpdate( id, { estado: false} ) ; //para borrarlo una mejor practiva es cambiarle el estado al usuario
+  const usuario = await User.findOneAndUpdate( id, { estado: false} ) ; //para borrarlo una mejor practiva es cambiarle el estado al usuario
   
 
-    res.json( usuario );
+    res.json( user );
 
  }
 
 
- const usuariosPath = (req, res ) => {
+ const usersPath = (req, res ) => {
     res.json({
         msg: 'patch API -controlador'
     });
@@ -109,9 +109,9 @@ const usuariosDelete = async(req, res ) => {
 
 
 module.exports = {
-    usuariosGet,
-    usuariosPut,
-    usuariosPost,
-    usuariosDelete,
-    usuariosPath,
+    usersGet,
+    usersPut,
+    usersPost,
+    usersDelete,
+    usersPath,
 }
