@@ -2,6 +2,7 @@ const { response , request }  = require('express')  //esto lo importo para el ti
 const bcryptjs = require('bcryptjs');  //este paquete para encriptar la contrasena
 
 const User = require('../models/usuario');
+const { generarJWT } = require('../helpers/generar-JWT');
 
 
 const usersGet =  async(req = request, res = response ) => {
@@ -74,10 +75,14 @@ const usersPost = async(req, res = response ) => {
 
      //guardar en BD
      await user.save();
-    
+     
+        // Generar el JWT
+        const token = await generarJWT( user.id );
+
     res.json({
         msg: 'post API -controlador',
-        user
+        user,
+        token
     });
 
  } 

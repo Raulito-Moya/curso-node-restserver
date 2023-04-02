@@ -10,9 +10,9 @@ const router = Router()
 
 
  router.post('/login',[
-     check('correo','El correo es obligatorio').isEmail(),
-     check('password','La contrasena es obligatoria').not().isEmpty(),
-     validarCampos
+    //  check('correo','El correo es obligatorio').isEmail(),
+    //  check('password','La contrasena es obligatoria').not().isEmpty(),
+    // validarCampos
  ], login);
 
 

@@ -1,7 +1,8 @@
 const { response } = require("express");
 const bcryptjs = require('bcryptjs')
+const jwt = require('jsonwebtoken');
 
-const Usuario = require('../models/usuario');
+const User = require('../models/usuario');
 
 const { generarJWT } = require("../helpers/generar-JWT");
 const { googleVerify } = require("../helpers/google-verify");
@@ -9,13 +10,14 @@ const { googleVerify } = require("../helpers/google-verify");
 
 const login = async(req, res = response) => {
 
-  const { correo, password } = req.body;
-
+  const { email, password } = req.body;
+   console.log(email)
    try {
 
       //verificar si el email existe
-       const usuario = await Usuario.findOne({ correo })
-      if ( !usuario ) {
+       const user = await User.findOne({ email })
+       console.log(user)
+      if ( !user ) {
           return res.status(400).json({
             msg: 'Usuario / Password no son correctos -correo'
           })
@@ -24,29 +26,32 @@ const login = async(req, res = response) => {
 
 
       // si el usuario esta activo
-      if ( !usuario.estado ) {
-        return res.status(400).json({
-          msg: 'Usuario / Password no son correctos -estado: false'
-        })
-     } 
+    //   if ( !user.estado ) {
+    //     return res.status(400).json({
+    //       msg: 'Usuario / Password no son correctos -estado: false'
+    //     })
+    //  } 
 
       // verificar la contrasena
-       const validPassword = bcryptjs.compareSync( password, usuario.password ); //comparar y hacer match
-        if ( !validPassword ) {
+       const validPassword = bcryptjs.compareSync( password, user.password ); //comparar y hacer match
+       console.log(validPassword)
+        if ( !validPassword  ) {
          return res.status(400).json({
-           msg: 'Usuario / Password no son correctos -password'
+           msg: 'User / Password are not correct -password'
          })
         }
 
-
-      // Generar el JWT
-      const token = await generarJWT( usuario.id );
+      let id = user.id
+        const token = jwt.sign({ 
+          id
+         
+        }, process.env.SECRETORPRIVATEKEY);
     
       
     res.json({
       msg: 'Login ok',
-      usuario:{
-       usuario
+      user:{
+       user
       },
       token
      }) 
@@ -67,37 +72,37 @@ const googleSignIn = async(req, res = response) => {
 
    try {
 
-     const { correo, nombre, img } = await googleVerify( id_token )
+     const { email, name, img } = await googleVerify( id_token )
     
-     let usuario = await Usuario.findOne({ correo });
+     let usuario = await Usuario.findOne({ email });
       
     if( !usuario ){
        //tengo que crearlo
        const data = {
-          nombre,
-          correo,
+          name,
+          email,
           password: ':P',
           img,
           google: true
        };
 
-       usuario = new Usuario(data);
-       await usuario.save()
+       user = new Usuario(data);
+       await user.save()
     }
     
     //si el usuario en DB
-     if ( !usuario.estado ) {
+     if ( !user.estado ) {
         res.status(401).json({
           msg:'Hable con el administrador, usuario bloqueado'
         });
      }
 
      // Generar el JWT
-     const token = await generarJWT( usuario.id );
+     const token = await generarJWT( user.id );
 
 
     res.json({
-      usuario,
+      user,
       token
     })
 
