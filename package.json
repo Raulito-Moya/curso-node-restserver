@@ -20,8 +20,10 @@
     "express-fileupload": "^1.2.1",
     "express-validator": "^6.11.1",
     "google-auth-library": "^7.0.4",
+    "googleapis": "^114.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.8",
+    "nodemailer": "^6.9.1",
     "uuid": "^8.3.2"
   }
 }

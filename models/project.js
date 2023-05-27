@@ -12,8 +12,10 @@ const ProjectSchema = Schema({
         required: true  //requiered en true pa todas las categorias tinen q tener un usuario
     },
     description: { type: String },
-    dateposted:{ type: Date
+    date:{ type: Date,
+        requiered:true
     },
+    completed:{type:Boolean, default:false},
     img: { type: String }
 
 });

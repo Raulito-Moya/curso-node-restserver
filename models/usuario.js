@@ -34,7 +34,7 @@ const UserSchema =  Schema({
         type: String,
         required: true,
         default: 'USER_ROLE', //exportacion por defecto
-        emun: ['ADMIN_ROLE', 'USER_ROLE']
+        
     },
     state: {
         type: Boolean,
@@ -44,6 +44,10 @@ const UserSchema =  Schema({
         type: Boolean,
         default: false
     },
+    projects: {
+        type: Array,
+        default:[]
+    }
 });
 
 

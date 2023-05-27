@@ -7,6 +7,7 @@ const postproject = async(req, res) => {
      
      const {name,description,date,token } = req.body
      console.log('token',token)
+    
      try {
         if(token){
             let id = await jwt.decode(token,process.env.SECRETORPRIVATEKEY)
@@ -18,9 +19,15 @@ const postproject = async(req, res) => {
          console.log('se logro')
          console.log(id)
           const project = new Project({"name":name,"description":description,"user":user.id,"date":date})
-           
-          await project.save()
+     
+           project.save()
 
+          const updatedUser = await User.findOneAndUpdate({_id:user.id},{
+            $push:{projects:project.id}
+         })
+         console.log('id',user.id)
+         console.log('updated user',updatedUser)
+          console.log('project updated')
           if(project){
             res.json({
                 project:project

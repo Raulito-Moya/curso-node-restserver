@@ -3,11 +3,13 @@
 const path = require('path');
 let nodemailer = require('nodemailer')
 const { google } = require('googleapis')
+const User = require('../models/usuario');
+const jwt = require('jsonwebtoken');
 
 
 const callbackprojectfunction =  async(req,res) => {
-  const {name,email} = req.body
-
+  const {token,project} = req.body
+ console.log('Se envio!!!!!!!!!')
   const oauth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI);
   oauth2Client.setCredentials({refresh_token: process.env.REFRESH_TOKEN});
 
@@ -15,7 +17,7 @@ const callbackprojectfunction =  async(req,res) => {
 
  // console.log(accesstoken);
    try {
-    
+    console.log('project!!!',project.project._id)
   
  //   console.log(accesstoken);
     const transporter = nodemailer.createTransport({
@@ -31,14 +33,26 @@ const callbackprojectfunction =  async(req,res) => {
 
       }
     })
+   
+    let id = await jwt.decode(token,process.env.SECRETORPRIVATEKEY)
+    console.log('id',id)
+    
+
+  let user = await User.findOne(id) 
+  // let project = await User.findOne({project:{$in:[user.id]}})
+  
+  // console.log('project!!',project)
+
 
     const mailData = {
       from: 'raulmoyaweb@gmail.com',
       to: `rauly7moya@gmail.com`,
-      subject: `Message From ${req.body.name}`,
-      text: req.body.message + " | Sent from: " + req.body.email,
-      html: `<div>${req.body.message}</div><p>Sent from:
-     <p>${req.body.email}</p>`
+      subject: `Message From ${user.name}`,
+      text: "You have a new project request" + " | Sent from: " + user.email,
+      html: `<div></div><p>Sent from:  
+     <p>Email:${user.email}</p>
+     <p>User:${user.id}</p>
+     <p>Project:${project.project._id}</p>`
     }
     
     
@@ -63,9 +77,9 @@ const callbackprojectfunction =  async(req,res) => {
 
    const callbackmailDataproject = {
     from: 'raulmoyaweb@gmail.com',
-    to: `${email}`,
+    to: `${user.email}`,
     subject: `Message From raulmoyaweb@gmail.com`,
-    text: req.body.message + " | Sent from: " + req.body.email,
+    text:   " | Sent from: " + 'raulmoyaweb@gmail.com',
     attachments: [{
         filename: 'Raul_logo2.png',
         path: 'https://res.cloudinary.com/dx33ki9ul/image/upload/v1631135752/Raul_logo2_uej8pg.png',
@@ -73,7 +87,7 @@ const callbackprojectfunction =  async(req,res) => {
     }],
     html: `<div> 
           <img  src="cid:logo"   alt="RauL Moya Logo"/>
-          <h2 style="text-align: center;color: #5f6368;"> Hi thank you for reuqets your project at ShowMore We will move forward for make your prject the soon as possible. </h2> 
+          <h2 style="text-align: center;color: #5f6368;"> Thank you for request your project at ShowMore. We look forward for create it if you have any question please reach out to 816-718-8927 or raulmoyaweb@gmail.com. Stay update for more info </h2> 
      </div>
      <p>Show More</p>
     <p>Sent from: raulmoyaweb@gmail.com</p>`,
